@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-// import { CSVLink, CSVDownload } from "react-csv";
+import React, { useState, useEffect, useRef } from "react";
+import { CSVLink } from "react-csv";
 
 const formStyle = {
   maxWidth: "300px",
@@ -33,6 +33,15 @@ const buttonStyle = {
   cursor: "pointer",
 };
 
+const csvButtonStyle = {
+  padding: "10px",
+  backgroundColor: "#4caf50",
+  color: "white",
+  border: "none",
+  borderRadius: "3px",
+  cursor: "pointer",
+};
+
 const headingStyle = {
   textAlign: "center",
   color: "#333",
@@ -40,7 +49,6 @@ const headingStyle = {
 
 const dropdownStyle = {
   border: "2px solid #ccc",
-  height: "50px",
   textAlign: "center",
 };
 
@@ -79,9 +87,10 @@ function App() {
   const [studentAnswers, setStudentAnswers] = useState([]);
   const [filteredNames, setFilteredNames] = useState([]);
 
-  // const [csvData, setCsvData] = useState([
-  //   ["Name", "User ID", "Comments", "Questions", "Answers", "Posts"],
-  // ]);
+  const [csvData, setCsvData] = useState([
+    ["Name", "User ID", "Comments", "Questions", "Answers", "Posts"],
+  ]);
+  const csvLink = useRef();
 
   useEffect(() => {
     fetch("/course_users")
@@ -141,90 +150,60 @@ function App() {
       });
   };
 
-  // const generateCsvData = (event, done) => {
-  //   courseUsers.forEach(async function (user) {
-  //     var posts = 0;
-  //     var postsLoaded = false;
-  //     var questions = 0;
-  //     var questionsLoaded = false;
-  //     var comments = 0;
-  //     var commentsLoaded = false;
-  //     var answers = 0;
-  //     var answersLoaded = false;
-  //     const name = user.name;
-  //     const id = user.user_id;
-  //     setTimeout(async () => {
-  //       await fetch(`/user_activity?user_id=${id}&activity_type=post`)
-  //         .then((res) => res.json())
-  //         .then((data) => {
-  //           console.log(data);
-  //           posts = data.length;
-  //           postsLoaded = true;
-  //         })
-  //         .catch((error) => {
-  //           console.log(error);
-  //           done(false);
-  //         });
-  //     }, "100");
+  const generateCsvData = async () => {
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  //     setTimeout(async () => {
-  //       await fetch(`/user_activity?user_id=${id}&activity_type=comment`)
-  //         .then((res) => res.json())
-  //         .then((data) => {
-  //           console.log(data);
-  //           comments = data.length;
-  //           commentsLoaded = true;
-  //         })
-  //         .catch((error) => {
-  //           console.log(error);
-  //           done(false);
-  //         });
-  //     }, "100");
-  //     setTimeout(async () => {
-  //       await fetch(`/user_activity?user_id=${id}&activity_type=question`)
-  //         .then((res) => res.json())
-  //         .then((data) => {
-  //           console.log(data);
-  //           questions = data.length;
-  //           questionsLoaded = true;
-  //         })
-  //         .catch((error) => {
-  //           console.log(error);
-  //           done(false);
-  //         });
-  //     }, "100");
-  //     setTimeout(async () => {
-  //       await fetch(`/user_activity?user_id=${id}&activity_type=answer`)
-  //         .then((res) => res.json())
-  //         .then((data) => {
-  //           console.log(data);
-  //           answers = data.length;
-  //           answersLoaded = true;
-  //         })
-  //         .catch((error) => {
-  //           console.log(error);
-  //           done(false);
-  //         });
-  //     }, "100");
-  //     if (commentsLoaded && questionsLoaded && answersLoaded && postsLoaded) {
-  //       var newRow = [name, id, comments, questions, answers, posts];
-  //       setCsvData((csvData) => [...csvData, newRow]);
-  //     }
-  //   });
-  //   if (csvData.length === courseUsers.length + 1) {
-  //     done(true);
-  //   }
-  // };
+    for (const user of courseUsers) {
+      try {
+        const id = user.user_id;
+        await fetch(`/user_activity?user_id=${id}&activity_type=all`)
+          .then((res) => res.json())
+          .then((data) => {
+            var posts = 0;
+            var comments = 0;
+            var questions = 0;
+            var answers = 0;
+            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].type === "post") {
+                posts++;
+              } else if (data[i].type === "comment") {
+                comments++;
+              } else if (data[i].type === "question") {
+                questions++;
+              } else if (data[i].type === "answer") {
+                answers++;
+              }
+            }
+            const newRow = [user.name, id, comments, questions, answers, posts];
+            console.log(newRow);
+            setCsvData((csvData) => [...csvData, newRow]);
+          });
+        await delay(1); // Introduce a delay between requests
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+    }
+    csvLink.current.link.click();
+  };
 
   return (
     <>
       <h1 style={headingStyle}>Ed Discussion Participation Scores</h1>
 
-      {/* <h2 style={headingStyle}>
-        <CSVLink data={csvData} asyncOnClick={true} onClick={generateCsvData}>
+      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <button type="button" style={csvButtonStyle} onClick={generateCsvData}>
           Download CSV
-        </CSVLink>
-      </h2> */}
+        </button>
+        <CSVLink
+          data={csvData}
+          filename="user_participation.csv"
+          className="hidden"
+          ref={csvLink}
+          target="_blank"
+        />
+      </div>
       <form style={formStyle} onSubmit={handleSubmit}>
         <label style={labelStyle}>
           Student Name:

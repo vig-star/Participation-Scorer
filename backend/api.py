@@ -38,7 +38,13 @@ def fetch_all_user_activity(user_id, activity_type='comment', filter='all'):
         if not activities:
             break
         for activity in activities:
-            if 'value' in activity and 'type' in activity['value'] and activity['value']['type'] == activity_type and 'document' in activity['value'] and len(activity['value']['document'].split()) > MIN_WORDS:
+            if activity_type == 'all' and 'value' in activity and 'type' in activity['value'] and 'document' in activity['value'] and len(activity['value']['document'].split()) > MIN_WORDS:
+                activity_text = activity['value']['document']
+                if not (any(word in activity_text.lower() for word in EXCLUDED_WORDS) and len(activity_text.split()) < INCLUDE_LENGTH):
+                    filtered_activities.append(activity['value']) 
+                else:
+                    print(activity_text, end='\n\n')
+            elif 'value' in activity and 'type' in activity['value'] and activity['value']['type'] == activity_type and 'document' in activity['value'] and len(activity['value']['document'].split()) > MIN_WORDS:
                 activity_text = activity['value']['document']
                 if not (any(word in activity_text.lower() for word in EXCLUDED_WORDS) and len(activity_text.split()) < INCLUDE_LENGTH):
                     filtered_activities.append(activity['value']) 
@@ -74,7 +80,7 @@ def user_activity():
         return "User ID is required", 400
     if not activity_type:
         return "Valid activity type required", 400
-    if activity_type != 'comment' and activity_type != 'post' and activity_type != 'question' and activity_type != 'answer':
+    if activity_type != 'comment' and activity_type != 'post' and activity_type != 'question' and activity_type != 'answer' and activity_type != 'all':
         return "Valid activity type required", 400
     
     activities = fetch_all_user_activity(user_id, activity_type)
