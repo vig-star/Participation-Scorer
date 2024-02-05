@@ -36,22 +36,16 @@ def fetch_all_user_activity(user_id, activity_type='comment', filter='all'):
         activities = response.get('items', [])
         if not activities:
             break
-        # print([activity for activity in activities if activity['type'] == activity_type])
         for activity in activities:
-            if 'type' in activity and activity['type'] == activity_type and 'value' in activity and 'document' in activity['value'] and len(activity['value']['document']) > MIN_WORDS:
+            if 'value' in activity and 'type' in activity['value'] and activity['value']['type'] == activity_type and 'document' in activity['value'] and len(activity['value']['document']) > MIN_WORDS:
                 activity_text = activity['value']['document']
                 if activity_type == 'comment' and not (any(word in activity_text.lower() for word in EXCLUDED_WORDS) and len(activity_text) < INCLUDE_LENGTH):
-                    filtered_activities.append(activity) 
+                    filtered_activities.append(activity['value']) 
                 elif activity_type != 'comment':
-                    filtered_activities.append(activity) 
+                    filtered_activities.append(activity['value']) 
                 else:
                     print(activity_text, end='\n\n')
-
-            elif activity['type'] == 'thread' and 'value' in activity and 'type' in activity['value'] and activity['value']['type'] == activity_type:
-                if activity_type == 'question' or activity_type == 'post' or activity_type == 'answer': 
-                    filtered_activities.append(activity['value'])
         offset += limit
-        # print(filtered_activities)
 
     return filtered_activities
 
