@@ -13,4 +13,4 @@ In another terminal, you can run:
 
 Runs the backend Python Flask server.
 
-Make sure to create an Ed Discussion token in `api.py` to run the project for yourself!
+Make sure to create an Ed Discussion API token and include the course ID in `api.py` to run the project for yourself!
