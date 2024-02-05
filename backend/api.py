@@ -5,7 +5,7 @@ import sys
 app = Flask(__name__)
 TOKEN = ""
 ED_HOST = "https://us.edstem.org/api"
-COURSE_ID = "49507"
+COURSE_ID = ""
 EXCLUDED_WORDS = ["thank", "thanks", "appreciate"]
 MIN_WORDS = 4
 INCLUDE_LENGTH = 15
