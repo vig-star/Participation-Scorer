@@ -13,4 +13,12 @@ In another terminal, you can run:
 
 Runs the backend Python Flask server.
 
+If you would like to tune the parameters for better participation scoring, tune the following parameters in `api.py`:
+
+```
+EXCLUDED_WORDS # list of words to exclude in contributions
+MIN_WORDS # minimum words needed to even be considered a valid contribution
+INCLUDE_LENGTH = # minimum words needed to include a contribution that had an excluded word
+```
+
 Make sure to create an Ed Discussion token in `api.py` to run the project for yourself!

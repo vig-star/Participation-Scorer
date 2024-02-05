@@ -6,9 +6,10 @@ app = Flask(__name__)
 TOKEN = ""
 ED_HOST = "https://us.edstem.org/api"
 COURSE_ID = ""
+
 EXCLUDED_WORDS = ["thank", "thanks", "appreciate"]
 MIN_WORDS = 4
-INCLUDE_LENGTH = 15
+INCLUDE_LENGTH = 20
 
 
 def request_ed_api(method, url, params=None):
@@ -37,11 +38,9 @@ def fetch_all_user_activity(user_id, activity_type='comment', filter='all'):
         if not activities:
             break
         for activity in activities:
-            if 'value' in activity and 'type' in activity['value'] and activity['value']['type'] == activity_type and 'document' in activity['value'] and len(activity['value']['document']) > MIN_WORDS:
+            if 'value' in activity and 'type' in activity['value'] and activity['value']['type'] == activity_type and 'document' in activity['value'] and len(activity['value']['document'].split()) > MIN_WORDS:
                 activity_text = activity['value']['document']
-                if activity_type == 'comment' and not (any(word in activity_text.lower() for word in EXCLUDED_WORDS) and len(activity_text) < INCLUDE_LENGTH):
-                    filtered_activities.append(activity['value']) 
-                elif activity_type != 'comment':
+                if not (any(word in activity_text.lower() for word in EXCLUDED_WORDS) and len(activity_text.split()) < INCLUDE_LENGTH):
                     filtered_activities.append(activity['value']) 
                 else:
                     print(activity_text, end='\n\n')

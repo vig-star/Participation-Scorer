@@ -38,15 +38,34 @@ const headingStyle = {
 };
 
 const dropdownStyle = {
-  position: "relative",
-  top: "80%", // Adjust this value to fit your layout
-  left: 0,
-  width: "100%",
-  backgroundColor: "#fff",
-  border: "1px solid #ccc",
-  borderRadius: "0 0 5px 5px",
-  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-  zIndex: 1,
+  border: "2px solid #ccc",
+  height: "50px",
+  textAlign: "center",
+};
+
+const dropdownActivityStyle = {
+  border: "2px solid #ccc",
+};
+
+const Dropdown = ({ label, data }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div style={{ textAlign: "center", marginBottom: "20px" }}>
+      <h3 style={headingStyle} onClick={() => setIsOpen(!isOpen)}>
+        {label} <span style={{ fontSize: "14px" }}>{isOpen ? "▲" : "▼"}</span>
+      </h3>
+      {isOpen && (
+        <div style={{ listStyleType: "none", padding: 0 }}>
+          {data.map((item, index) => (
+            <div style={dropdownActivityStyle} key={index}>
+              {item.document}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
 function App() {
@@ -134,6 +153,7 @@ function App() {
             <div>
               {filteredNames.map((item, index) => (
                 <div
+                  style={dropdownStyle}
                   key={index}
                   onClick={() => {
                     setStudentName(item.name);
@@ -154,14 +174,23 @@ function App() {
           style={buttonStyle}
         />
       </form>
-      <h3 style={headingStyle}>
-        Number of questions: {studentQuestions.length}
-      </h3>
-      <h3 style={headingStyle}>Number of posts: {studentPosts.length}</h3>
-      <h3 style={headingStyle}>Number of answers: {studentAnswers.length}</h3>
-      <h3 style={headingStyle}>
-        Number of GOOD comments: {studentComments.length}
-      </h3>
+
+      <Dropdown
+        label={`Number of questions: ${studentQuestions.length}`}
+        data={studentQuestions}
+      />
+      <Dropdown
+        label={`Number of posts: ${studentPosts.length}`}
+        data={studentPosts}
+      />
+      <Dropdown
+        label={`Number of answers: ${studentAnswers.length}`}
+        data={studentAnswers}
+      />
+      <Dropdown
+        label={`Number of comments: ${studentComments.length}`}
+        data={studentComments}
+      />
     </>
   );
 }
