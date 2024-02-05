@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+// import { CSVLink, CSVDownload } from "react-csv";
 
 const formStyle = {
   maxWidth: "300px",
@@ -78,6 +79,10 @@ function App() {
   const [studentAnswers, setStudentAnswers] = useState([]);
   const [filteredNames, setFilteredNames] = useState([]);
 
+  // const [csvData, setCsvData] = useState([
+  //   ["Name", "User ID", "Comments", "Questions", "Answers", "Posts"],
+  // ]);
+
   useEffect(() => {
     fetch("/course_users")
       .then((res) => res.json())
@@ -136,9 +141,90 @@ function App() {
       });
   };
 
+  // const generateCsvData = (event, done) => {
+  //   courseUsers.forEach(async function (user) {
+  //     var posts = 0;
+  //     var postsLoaded = false;
+  //     var questions = 0;
+  //     var questionsLoaded = false;
+  //     var comments = 0;
+  //     var commentsLoaded = false;
+  //     var answers = 0;
+  //     var answersLoaded = false;
+  //     const name = user.name;
+  //     const id = user.user_id;
+  //     setTimeout(async () => {
+  //       await fetch(`/user_activity?user_id=${id}&activity_type=post`)
+  //         .then((res) => res.json())
+  //         .then((data) => {
+  //           console.log(data);
+  //           posts = data.length;
+  //           postsLoaded = true;
+  //         })
+  //         .catch((error) => {
+  //           console.log(error);
+  //           done(false);
+  //         });
+  //     }, "100");
+
+  //     setTimeout(async () => {
+  //       await fetch(`/user_activity?user_id=${id}&activity_type=comment`)
+  //         .then((res) => res.json())
+  //         .then((data) => {
+  //           console.log(data);
+  //           comments = data.length;
+  //           commentsLoaded = true;
+  //         })
+  //         .catch((error) => {
+  //           console.log(error);
+  //           done(false);
+  //         });
+  //     }, "100");
+  //     setTimeout(async () => {
+  //       await fetch(`/user_activity?user_id=${id}&activity_type=question`)
+  //         .then((res) => res.json())
+  //         .then((data) => {
+  //           console.log(data);
+  //           questions = data.length;
+  //           questionsLoaded = true;
+  //         })
+  //         .catch((error) => {
+  //           console.log(error);
+  //           done(false);
+  //         });
+  //     }, "100");
+  //     setTimeout(async () => {
+  //       await fetch(`/user_activity?user_id=${id}&activity_type=answer`)
+  //         .then((res) => res.json())
+  //         .then((data) => {
+  //           console.log(data);
+  //           answers = data.length;
+  //           answersLoaded = true;
+  //         })
+  //         .catch((error) => {
+  //           console.log(error);
+  //           done(false);
+  //         });
+  //     }, "100");
+  //     if (commentsLoaded && questionsLoaded && answersLoaded && postsLoaded) {
+  //       var newRow = [name, id, comments, questions, answers, posts];
+  //       setCsvData((csvData) => [...csvData, newRow]);
+  //     }
+  //   });
+  //   if (csvData.length === courseUsers.length + 1) {
+  //     done(true);
+  //   }
+  // };
+
   return (
     <>
       <h1 style={headingStyle}>Ed Discussion Participation Scores</h1>
+
+      {/* <h2 style={headingStyle}>
+        <CSVLink data={csvData} asyncOnClick={true} onClick={generateCsvData}>
+          Download CSV
+        </CSVLink>
+      </h2> */}
       <form style={formStyle} onSubmit={handleSubmit}>
         <label style={labelStyle}>
           Student Name:
@@ -149,7 +235,7 @@ function App() {
             value={studentName}
             onChange={handleNameChange}
           />
-          {filteredNames.length > 0 && (
+          {filteredNames.length > 0 && studentName.length > 0 && (
             <div>
               {filteredNames.map((item, index) => (
                 <div
@@ -174,7 +260,6 @@ function App() {
           style={buttonStyle}
         />
       </form>
-
       <Dropdown
         label={`Number of questions: ${studentQuestions.length}`}
         data={studentQuestions}

@@ -3,9 +3,9 @@ import requests
 import sys
 
 app = Flask(__name__)
-TOKEN = ""
+TOKEN = "QaZQh_.dZO7ax8GA3MCa5bhazITF8ymvXxFjWHxXo0pTcEj"
 ED_HOST = "https://us.edstem.org/api"
-COURSE_ID = ""
+COURSE_ID = "49507"
 
 EXCLUDED_WORDS = ["thank", "thanks", "appreciate"]
 MIN_WORDS = 4
@@ -25,7 +25,7 @@ def request_ed_api(method, url, params=None):
 def fetch_all_user_activity(user_id, activity_type='comment', filter='all'):
     filtered_activities = []
     offset = 0
-    limit = 100
+    limit = 300
     while True:
         params = {
             "courseID": COURSE_ID,

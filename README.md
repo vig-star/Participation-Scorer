@@ -1,17 +1,24 @@
 # Participation Scorer
 
-In the project directory, you can run:
+In the project directory, install the necessary packages:
 
-### `npm start`
+```
+npm install
+```
 
-Runs the app in the development mode.\
+Then you can run the app in development mode:
+
+```
+npm start
+```
+
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-In another terminal, you can run:
+In another terminal, runs the backend Python Flask server.:
 
-### `npm run start-api`
-
-Runs the backend Python Flask server.
+```
+npm run start-api
+```
 
 If you would like to tune the parameters for better participation scoring, tune the following parameters in `api.py`:
 
