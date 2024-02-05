@@ -21,4 +21,4 @@ MIN_WORDS # minimum words needed to even be considered a valid contribution
 INCLUDE_LENGTH = # minimum words needed to include a contribution that had an excluded word
 ```
 
-Make sure to create an Ed Discussion token in `api.py` to run the project for yourself!
+Make sure to create an Ed Discussion API token and include the course ID in `api.py` to run the project for yourself!
